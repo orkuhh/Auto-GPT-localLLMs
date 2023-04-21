@@ -262,7 +262,7 @@ class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
             messages = [
             {
                 "role": "system",
-                "content": f"You are now the following python function: ```# {description}\n{function}```\n\nOnly respond with your `return` value.",
+                "content": f"You are now the following python function: ```# \n{function}```\n\nOnly respond with your `return` value.",
             },
             {"role": "user", "content": args},
         ]
