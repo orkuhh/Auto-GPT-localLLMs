@@ -1,10 +1,14 @@
 """This is a template for Auto-GPT plugins."""
 import abc
+from llama_cpp import Llama
+ 
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 from abstract_singleton import AbstractSingleton, Singleton
 
 PromptGenerator = TypeVar("PromptGenerator")
+
+llm = Llama(model_path="path/to/llm")
 
 
 class Message(TypedDict):
@@ -14,14 +18,20 @@ class Message(TypedDict):
 
 class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
     """
-    This is a template for Auto-GPT plugins.
+    This is an attepmpt to make Auto-GPT use local LLMs .
     """
 
-    def __init__(self):
+    def __init__(self,model_path, n_ctx=512, n_parts=-1, seed=1337, f16_kv=True, logits_all=False, vocab_only=False, use_mmap=True, use_mlock=False, embedding=False, n_threads=None, n_batch=8, last_n_tokens_size=64, verbose=True):
         super().__init__()
-        self._name = "Auto-GPT-Plugin-Template"
-        self._version = "0.1.0"
-        self._description = "This is a template for Auto-GPT plugins."
+        self._name = "Auto-GPT-local-llm-plugin"
+        self._version = "0.0.1"
+        self._description = "This is an Auto-GPT plugin that allows using local LLMs with help of alpaca.cpp."
+        self.llm = Llama(model_path=model_path, n_ctx=n_ctx, n_parts=n_parts, seed=seed, f16_kv=f16_kv, logits_all=logits_all, vocab_only=vocab_only, use_mmap=use_mmap, use_mlock=use_mlock, embedding=embedding, n_threads=n_threads, n_batch=n_batch, last_n_tokens_size=last_n_tokens_size, verbose=verbose)
+    
+    
+        
+        
+
 
     @abc.abstractmethod
     def can_handle_on_response(self) -> bool:
