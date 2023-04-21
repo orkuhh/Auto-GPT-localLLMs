@@ -1,7 +1,8 @@
 """This is a template for Auto-GPT plugins."""
 import abc
 from llama_cpp import Llama
- 
+from llm_utils import create_chat_completion
+
 from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 from abstract_singleton import AbstractSingleton, Singleton
@@ -239,7 +240,7 @@ class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
 
     @abc.abstractmethod
     def handle_chat_completion(
-        self, messages: List[Message], model: str, temperature: float, max_tokens: int
+        self, messages: List[Message], model: None, temperature: float, max_tokens: int
     ) -> str:
         """This method is called when the chat completion is done.
 
@@ -252,4 +253,26 @@ class AutoGPTPluginTemplate(AbstractSingleton, metaclass=Singleton):
         Returns:
             str: The resulting response.
         """
-        pass
+        if model is None:
+            model = llm
+            # For each arg, if any are None, convert to "None":
+            args = [str(arg) if arg is not None else "None" for arg in args]
+            # parse args to comma seperated string
+            args = ", ".join(args)
+            messages = [
+            {
+                "role": "system",
+                "content": f"You are now the following python function: ```# {description}\n{function}```\n\nOnly respond with your `return` value.",
+            },
+            {"role": "user", "content": args},
+        ]
+
+        response = create_chat_completion(
+            model=model, messages=messages, temperature=0
+        )
+
+        return response
+
+
+
+      
